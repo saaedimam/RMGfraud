@@ -32,8 +32,11 @@ login_manager.login_view = 'auth.login'
 login_manager.login_message = 'Please log in to access this page.'
 csrf = CSRFProtect(app)
 
-# Import models and routes
-from models import User, Entity, FraudReport, CountryProfile, db
+# Import and initialize models
+from models import init_db, User, Entity, FraudReport, CountryProfile
+init_db(db)
+
+# Import routes
 from routes import auth, dashboard, database, reporting, country
 
 # Register blueprints

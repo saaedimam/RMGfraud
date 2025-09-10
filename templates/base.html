@@ -15,7 +15,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     
-    <!-- Additional Head Content -->
     {% block head %}{% endblock %}
 </head>
 <body class="dark-theme">
@@ -26,7 +25,8 @@
                 <i class="fas fa-shield-alt text-danger me-2"></i>RMGFraud
             </a>
             
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <!-- Navbar Toggler with aria-label for accessibility -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             
@@ -57,26 +57,34 @@
                 <ul class="navbar-nav">
                     {% if current_user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-label="User menu">
                                 <i class="fas fa-user me-1"></i>{{ current_user.username }}
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.profile') }}">
-                                    <i class="fas fa-user-circle me-2"></i>Profile
-                                </a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.settings') }}">
-                                    <i class="fas fa-cog me-2"></i>Settings
-                                </a></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('dashboard.profile') }}">
+                                        <i class="fas fa-user-circle me-2"></i>Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('dashboard.settings') }}">
+                                        <i class="fas fa-cog me-2"></i>Settings
+                                    </a>
+                                </li>
                                 {% if current_user.role in ['admin', 'moderator'] %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('dashboard.admin') }}">
-                                    <i class="fas fa-tools me-2"></i>Admin Panel
-                                </a></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('dashboard.admin') }}">
+                                        <i class="fas fa-tools me-2"></i>Admin Panel
+                                    </a>
+                                </li>
                                 {% endif %}
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
-                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                </a></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     {% else %}
@@ -105,14 +113,14 @@
                     {% for category, message in messages %}
                         <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
                             {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            <!-- Added aria-label for screen readers -->
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close alert"></button>
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
         {% endwith %}
 
-        <!-- Page Content -->
         {% block content %}{% endblock %}
     </main>
 
@@ -137,7 +145,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     
-    <!-- Additional Scripts -->
     {% block scripts %}{% endblock %}
 </body>
 </html>
