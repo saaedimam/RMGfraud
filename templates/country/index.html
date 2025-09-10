@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Countries - RMGFraud{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="countries-header bg-dark p-4 rounded">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="text-white mb-0">
+                            <i class="fas fa-globe me-3"></i>Country Profiles
+                        </h1>
+                        <p class="text-muted mb-0">Fraud statistics and analysis by country</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="stats-row">
+                            <span class="badge bg-danger me-2">{{ total_fraud_count }} Total Cases</span>
+                            <span class="badge bg-warning me-2">{{ total_high_risk }} High Risk</span>
+                            <span class="badge bg-dark">{{ total_critical }} Critical</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-globe text-primary fa-2x mb-2"></i>
+                <h3 class="text-white">{{ countries|length }}</h3>
+                <p class="text-muted mb-0">Countries Monitored</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-exclamation-triangle text-warning fa-2x mb-2"></i>
+                <h3 class="text-white">{{ total_fraud_count }}</h3>
+                <p class="text-muted mb-0">Total Fraud Cases</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-chart-line text-info fa-2x mb-2"></i>
+                <h3 class="text-white">{{ total_high_risk }}</h3>
+                <p class="text-muted mb-0">High Risk Cases</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-fire text-danger fa-2x mb-2"></i>
+                <h3 class="text-white">{{ total_critical }}</h3>
+                <p class="text-muted mb-0">Critical Cases</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Countries Grid -->
+    <div class="row">
+        {% for country in countries %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="country-card bg-dark p-4 rounded h-100">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h4 class="text-white mb-1">{{ country.country_name }}</h4>
+                        <small class="text-muted">{{ country.country_code }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-{% if country.fraud_count > 15 %}danger{% elif country.fraud_count > 8 %}warning{% else %}success{% endif %}">
+                            {{ country.fraud_count }} Cases
+                        </span>
+                    </div>
+                </div>
+
+                <div class="country-stats mb-3">
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <small class="text-muted">High Risk</small>
+                                <div class="text-warning fw-bold">{{ country.high_risk_count }}</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-item">
+                                <small class="text-muted">Critical</small>
+                                <div class="text-danger fw-bold">{{ country.critical_count }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="country-trend mb-3">
+                    <small class="text-muted">Trend: </small>
+                    <span class="badge bg-{% if country.fraud_trend == 'increasing' %}danger{% elif country.fraud_trend == 'decreasing' %}success{% else %}secondary{% endif %}">
+                        <i class="fas fa-arrow-{% if country.fraud_trend == 'increasing' %}up{% elif country.fraud_trend == 'decreasing' %}down{% else %}right{% endif %} me-1"></i>
+                        {{ country.fraud_trend or 'Stable' }}
+                    </span>
+                </div>
+
+                <div class="d-grid">
+                    <a href="{{ url_for('country.country_detail', country_code=country.country_code) }}" 
+                       class="btn btn-outline-light btn-sm">
+                        <i class="fas fa-chart-bar me-1"></i>View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not countries %}
+    <!-- Empty State -->
+    <div class="row">
+        <div class="col-12">
+            <div class="text-center py-5">
+                <div class="empty-state bg-dark p-5 rounded">
+                    <i class="fas fa-globe text-muted fa-3x mb-3"></i>
+                    <h4 class="text-white">No Country Data Available</h4>
+                    <p class="text-muted">Country profiles will appear here once fraud reports are submitted.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add hover effects to country cards
+document.addEventListener('DOMContentLoaded', function() {
+    const countryCards = document.querySelectorAll('.country-card');
+    
+    countryCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.3)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}Database - RMGFraud{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="database-header bg-dark p-4 rounded">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h1 class="text-white mb-0">
+                            <i class="fas fa-database me-3"></i>Entity Database
+                        </h1>
+                        <p class="text-muted mb-0">Search and analyze entities in the RMG industry</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="stats-row">
+                            <span class="badge bg-success me-2">{{ total_entities }} Total</span>
+                            <span class="badge bg-warning me-2">{{ high_risk_count }} High Risk</span>
+                            <span class="badge bg-info">{{ verified_count }} Verified</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="search-filters bg-dark p-4 rounded">
+                <form method="GET" id="searchForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="q" class="form-label">Search</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="q" 
+                                   name="q" 
+                                   value="{{ search_query }}"
+                                   placeholder="Search entities...">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="entity_type" class="form-label">Type</label>
+                            <select class="form-select" id="entity_type" name="entity_type">
+                                <option value="">All Types</option>
+                                <option value="company" {% if entity_type == 'company' %}selected{% endif %}>Company</option>
+                                <option value="individual" {% if entity_type == 'individual' %}selected{% endif %}>Individual</option>
+                                <option value="supplier" {% if entity_type == 'supplier' %}selected{% endif %}>Supplier</option>
+                                <option value="manufacturer" {% if entity_type == 'manufacturer' %}selected{% endif %}>Manufacturer</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="risk_level" class="form-label">Risk Level</label>
+                            <select class="form-select" id="risk_level" name="risk_level">
+                                <option value="">All Levels</option>
+                                <option value="Low" {% if risk_level == 'Low' %}selected{% endif %}>Low</option>
+                                <option value="Medium" {% if risk_level == 'Medium' %}selected{% endif %}>Medium</option>
+                                <option value="High" {% if risk_level == 'High' %}selected{% endif %}>High</option>
+                                <option value="Critical" {% if risk_level == 'Critical' %}selected{% endif %}>Critical</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="country" class="form-label">Country</label>
+                            <select class="form-select" id="country" name="country">
+                                <option value="">All Countries</option>
+                                <option value="BD" {% if country == 'BD' %}selected{% endif %}>Bangladesh</option>
+                                <option value="IN" {% if country == 'IN' %}selected{% endif %}>India</option>
+                                <option value="PK" {% if country == 'PK' %}selected{% endif %}>Pakistan</option>
+                                <option value="CN" {% if country == 'CN' %}selected{% endif %}>China</option>
+                                <option value="LK" {% if country == 'LK' %}selected{% endif %}>Sri Lanka</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">&nbsp;</label>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="fas fa-search me-1"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="results-section">
+                {% if entities.items %}
+                <!-- Results Table -->
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="?{{ request.query_string.decode() }}&sort_by=name&sort_order={% if sort_by == 'name' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-white">
+                                        Name
+                                        {% if sort_by == 'name' %}
+                                            <i class="fas fa-sort-{% if sort_order == 'asc' %}up{% else %}down{% endif %} ms-1"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Type</th>
+                                <th>
+                                    <a href="?{{ request.query_string.decode() }}&sort_by=risk_level&sort_order={% if sort_by == 'risk_level' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-white">
+                                        Risk Level
+                                        {% if sort_by == 'risk_level' %}
+                                            <i class="fas fa-sort-{% if sort_order == 'asc' %}up{% else %}down{% endif %} ms-1"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Country</th>
+                                <th>Status</th>
+                                <th>
+                                    <a href="?{{ request.query_string.decode() }}&sort_by=created_at&sort_order={% if sort_by == 'created_at' and sort_order == 'asc' %}desc{% else %}asc{% endif %}" 
+                                       class="text-decoration-none text-white">
+                                        Created
+                                        {% if sort_by == 'created_at' %}
+                                            <i class="fas fa-sort-{% if sort_order == 'asc' %}up{% else %}down{% endif %} ms-1"></i>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entity in entities.items %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-{% if entity.entity_type == 'company' %}building{% elif entity.entity_type == 'individual' %}user{% else %}industry{% endif %} me-2 text-muted"></i>
+                                        <div>
+                                            <strong>{{ entity.name }}</strong>
+                                            {% if entity.registration_number %}
+                                                <br><small class="text-muted">{{ entity.registration_number }}</small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ entity.entity_type.title() }}</span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if entity.risk_level == 'Low' %}success{% elif entity.risk_level == 'Medium' %}warning{% elif entity.risk_level == 'High' %}danger{% else %}dark{% endif %}">
+                                        {{ entity.risk_level }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="text-muted">{{ entity.country_code }}</span>
+                                </td>
+                                <td>
+                                    {% if entity.is_verified %}
+                                        <span class="badge bg-success">
+                                            <i class="fas fa-check me-1"></i>Verified
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-warning">
+                                            <i class="fas fa-clock me-1"></i>Pending
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ entity.created_at.strftime('%Y-%m-%d') }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('database.entity_detail', id=entity.id) }}" 
+                                           class="btn btn-outline-light btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if current_user.is_authenticated and current_user.is_verified %}
+                                        <a href="{{ url_for('database.edit_entity', id=entity.id) }}" 
+                                           class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if entities.pages > 1 %}
+                <nav aria-label="Entity pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        {% if entities.has_prev %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark border-secondary text-white" 
+                               href="?{{ request.query_string.decode() }}&page={{ entities.prev_num }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for page_num in entities.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != entities.page %}
+                                <li class="page-item">
+                                    <a class="page-link bg-dark border-secondary text-white" 
+                                       href="?{{ request.query_string.decode() }}&page={{ page_num }}">
+                                        {{ page_num }}
+                                    </a>
+                                </li>
+                                {% else %}
+                                <li class="page-item active">
+                                    <span class="page-link bg-danger border-danger">{{ page_num }}</span>
+                                </li>
+                                {% endif %}
+                            {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link bg-dark border-secondary text-muted">...</span>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if entities.has_next %}
+                        <li class="page-item">
+                            <a class="page-link bg-dark border-secondary text-white" 
+                               href="?{{ request.query_string.decode() }}&page={{ entities.next_num }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+                {% else %}
+                <!-- No Results -->
+                <div class="text-center py-5">
+                    <div class="empty-state bg-dark p-5 rounded">
+                        <i class="fas fa-search text-muted fa-3x mb-3"></i>
+                        <h4 class="text-white">No entities found</h4>
+                        <p class="text-muted">Try adjusting your search criteria or add a new entity.</p>
+                        {% if current_user.is_authenticated and current_user.is_verified %}
+                        <a href="{{ url_for('database.add_entity') }}" class="btn btn-danger">
+                            <i class="fas fa-plus me-2"></i>Add Entity
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-submit form on filter change
+document.addEventListener('DOMContentLoaded', function() {
+    const filterSelects = document.querySelectorAll('#searchForm select');
+    filterSelects.forEach(function(select) {
+        select.addEventListener('change', function() {
+            document.getElementById('searchForm').submit();
+        });
+    });
+});
+</script>
+{% endblock %}

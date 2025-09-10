@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Register - RMGFraud{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="auth-card bg-dark p-4 rounded mt-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus text-danger fa-3x mb-3"></i>
+                    <h2 class="text-white">Create Account</h2>
+                    <p class="text-muted">Join the RMGFraud community</p>
+                </div>
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="username" 
+                                       name="username" 
+                                       required 
+                                       autocomplete="username">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" 
+                                       class="form-control" 
+                                       id="email" 
+                                       name="email" 
+                                       required 
+                                       autocomplete="email">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="password" 
+                                       name="password" 
+                                       required 
+                                       autocomplete="new-password"
+                                       minlength="8">
+                                <div class="form-text text-muted">
+                                    Password must be at least 8 characters long
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="confirm_password" class="form-label">Confirm Password</label>
+                                <input type="password" 
+                                       class="form-control" 
+                                       id="confirm_password" 
+                                       name="confirm_password" 
+                                       required 
+                                       autocomplete="new-password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="verification_type" class="form-label">Verification Type</label>
+                        <select class="form-select" id="verification_type" name="verification_type" required>
+                            <option value="">Select verification type</option>
+                            <option value="bgmea">BGMEA Membership ID</option>
+                            <option value="rmg_supplier">RMG Supplier ID</option>
+                            <option value="banking">Banking Partner Credentials</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="verification_id" class="form-label">Verification ID</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="verification_id" 
+                               name="verification_id" 
+                               required 
+                               placeholder="Enter your verification ID">
+                        <div class="form-text text-muted">
+                            This will be verified by our administrators
+                        </div>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" required>
+                        <label class="form-check-label text-light" for="terms">
+                            I agree to the <a href="#" class="text-danger">Terms of Service</a> and 
+                            <a href="#" class="text-danger">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="text-muted">
+                        Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="text-danger text-decoration-none">
+                            Login here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Report Fraud - RMGFraud{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="reporting-card bg-dark p-4 rounded mt-5">
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-danger fa-3x mb-3"></i>
+                    <h2 class="text-white">Report Fraud</h2>
+                    <p class="text-muted">Help protect the RMG industry by reporting fraudulent activities</p>
+                </div>
+
+                <form method="POST" id="fraudReportForm">
+                    <!-- Basic Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Basic Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Report Title *</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="title" 
+                                       name="title" 
+                                       required 
+                                       placeholder="Brief title describing the fraud incident">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="fraud_type" class="form-label">Fraud Type *</label>
+                                        <select class="form-select" id="fraud_type" name="fraud_type" required>
+                                            <option value="">Select fraud type</option>
+                                            <option value="Financial Fraud">Financial Fraud</option>
+                                            <option value="Supply Chain Fraud">Supply Chain Fraud</option>
+                                            <option value="Labor Violations">Labor Violations</option>
+                                            <option value="Environmental Violations">Environmental Violations</option>
+                                            <option value="Document Forgery">Document Forgery</option>
+                                            <option value="Bribery and Corruption">Bribery and Corruption</option>
+                                            <option value="Tax Evasion">Tax Evasion</option>
+                                            <option value="Money Laundering">Money Laundering</option>
+                                            <option value="Intellectual Property Theft">Intellectual Property Theft</option>
+                                            <option value="Quality Control Fraud">Quality Control Fraud</option>
+                                            <option value="Safety Violations">Safety Violations</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="risk_level" class="form-label">Risk Level *</label>
+                                        <select class="form-select" id="risk_level" name="risk_level" required>
+                                            <option value="">Select risk level</option>
+                                            <option value="Low">Low - Minor violation</option>
+                                            <option value="Medium">Medium - Moderate concern</option>
+                                            <option value="High">High - Serious violation</option>
+                                            <option value="Critical">Critical - Immediate threat</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="summary" class="form-label">Summary *</label>
+                                <textarea class="form-control" 
+                                          id="summary" 
+                                          name="summary" 
+                                          rows="3" 
+                                          required 
+                                          placeholder="Brief summary of the fraud incident"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entity Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-building me-2"></i>Entity Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="entity_name" class="form-label">Entity Name</label>
+                                        <input type="text" 
+                                               class="form-control" 
+                                               id="entity_name" 
+                                               name="entity_name" 
+                                               placeholder="Company or individual name">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="entity_type" class="form-label">Entity Type</label>
+                                        <select class="form-select" id="entity_type" name="entity_type">
+                                            <option value="">Select entity type</option>
+                                            <option value="company">Company</option>
+                                            <option value="individual">Individual</option>
+                                            <option value="supplier">Supplier</option>
+                                            <option value="manufacturer">Manufacturer</option>
+                                            <option value="buyer">Buyer</option>
+                                            <option value="agent">Agent</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="country_code" class="form-label">Country</label>
+                                <select class="form-select" id="country_code" name="country_code">
+                                    <option value="">Select country</option>
+                                    <option value="BD">Bangladesh</option>
+                                    <option value="IN">India</option>
+                                    <option value="PK">Pakistan</option>
+                                    <option value="CN">China</option>
+                                    <option value="LK">Sri Lanka</option>
+                                    <option value="MM">Myanmar</option>
+                                    <option value="TH">Thailand</option>
+                                    <option value="VN">Vietnam</option>
+                                    <option value="ID">Indonesia</option>
+                                    <option value="MY">Malaysia</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Information -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-file-alt me-2"></i>Detailed Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="detailed_description" class="form-label">Detailed Description</label>
+                                <textarea class="form-control" 
+                                          id="detailed_description" 
+                                          name="detailed_description" 
+                                          rows="5" 
+                                          placeholder="Provide detailed information about the fraud incident, including dates, locations, and specific details"></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="sources" class="form-label">Sources</label>
+                                <textarea class="form-control" 
+                                          id="sources" 
+                                          name="sources" 
+                                          rows="3" 
+                                          placeholder="List any sources, documents, or evidence that support your report (one per line)"></textarea>
+                                <div class="form-text text-muted">
+                                    Include any supporting documentation, witness names, or other evidence
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Settings -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="text-white mb-0">
+                                <i class="fas fa-shield-alt me-2"></i>Privacy Settings
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-check">
+                                <input class="form-check-input" 
+                                       type="checkbox" 
+                                       id="is_anonymous" 
+                                       name="is_anonymous" 
+                                       checked>
+                                <label class="form-check-label text-light" for="is_anonymous">
+                                    Submit anonymously
+                                </label>
+                                <div class="form-text text-muted">
+                                    Your identity will be protected and not shared with anyone
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Security Notice -->
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Security Notice:</strong> All reports are encrypted and stored securely. 
+                        Your information is protected and will only be used for investigation purposes.
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('fraudReportForm');
+    
+    // Form validation
+    form.addEventListener('submit', function(e) {
+        const requiredFields = ['title', 'fraud_type', 'risk_level', 'summary'];
+        let isValid = true;
+        
+        requiredFields.forEach(function(fieldName) {
+            const field = document.getElementById(fieldName);
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill in all required fields.');
+        }
+    });
+    
+    // Real-time validation
+    const requiredFields = ['title', 'fraud_type', 'risk_level', 'summary'];
+    requiredFields.forEach(function(fieldName) {
+        const field = document.getElementById(fieldName);
+        field.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

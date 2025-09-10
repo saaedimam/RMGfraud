@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - RMGFraud{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="welcome-card bg-dark p-4 rounded">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h1 class="text-white mb-2">Welcome back, {{ current_user.username }}!</h1>
+                        <p class="text-muted mb-0">Here's what's happening in the RMG fraud detection platform.</p>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <div class="user-status">
+                            <span class="badge bg-{% if current_user.is_verified %}success{% else %}warning{% endif %} me-2">
+                                <i class="fas fa-{% if current_user.is_verified %}check{% else %}clock{% endif %} me-1"></i>
+                                {% if current_user.is_verified %}Verified{% else %}Pending{% endif %}
+                            </span>
+                            <span class="badge bg-info">{{ current_user.role.title() }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-file-alt text-primary fa-2x mb-2"></i>
+                <h3 class="text-white">{{ user_reports }}</h3>
+                <p class="text-muted mb-0">Your Reports</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-database text-info fa-2x mb-2"></i>
+                <h3 class="text-white">{{ total_entities }}</h3>
+                <p class="text-muted mb-0">Total Entities</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-exclamation-triangle text-warning fa-2x mb-2"></i>
+                <h3 class="text-white">{{ high_risk_entities }}</h3>
+                <p class="text-muted mb-0">High Risk Entities</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card bg-dark p-4 rounded text-center">
+                <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                <h3 class="text-white">{{ verified_reports }}</h3>
+                <p class="text-muted mb-0">Verified Reports</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Recent Reports -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-clock me-2"></i>Your Recent Reports
+                    </h5>
+                    <a href="{{ url_for('reporting.my_reports') }}" class="btn btn-outline-light btn-sm">
+                        View All
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if recent_reports %}
+                    <div class="reports-list">
+                        {% for report in recent_reports %}
+                        <div class="report-item d-flex justify-content-between align-items-center py-3 border-bottom">
+                            <div class="report-info">
+                                <h6 class="text-white mb-1">{{ report.title }}</h6>
+                                <small class="text-muted">
+                                    <i class="fas fa-tag me-1"></i>{{ report.fraud_type }}
+                                    <span class="ms-3">
+                                        <i class="fas fa-calendar me-1"></i>{{ report.created_at.strftime('%Y-%m-%d') }}
+                                    </span>
+                                </small>
+                            </div>
+                            <div class="report-status">
+                                <span class="badge bg-{% if report.status == 'verified' %}success{% elif report.status == 'pending' %}warning{% elif report.status == 'rejected' %}danger{% else %}secondary{% endif %}">
+                                    {{ report.status.title() }}
+                                </span>
+                                <span class="badge bg-{% if report.risk_level == 'Critical' %}dark{% elif report.risk_level == 'High' %}danger{% elif report.risk_level == 'Medium' %}warning{% else %}success{% endif %} ms-2">
+                                    {{ report.risk_level }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-alt text-muted fa-2x mb-3"></i>
+                        <h6 class="text-white">No reports yet</h6>
+                        <p class="text-muted">Start by submitting your first fraud report.</p>
+                        <a href="{{ url_for('reporting.submit') }}" class="btn btn-danger">
+                            <i class="fas fa-plus me-2"></i>Submit Report
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions & Recent Activity -->
+        <div class="col-lg-4">
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-bolt me-2"></i>Quick Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('reporting.submit') }}" class="btn btn-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Report Fraud
+                        </a>
+                        <a href="{{ url_for('database.index') }}" class="btn btn-outline-light">
+                            <i class="fas fa-search me-2"></i>Search Database
+                        </a>
+                        <a href="{{ url_for('country.index') }}" class="btn btn-outline-light">
+                            <i class="fas fa-globe me-2"></i>View Countries
+                        </a>
+                        {% if current_user.is_verified %}
+                        <a href="{{ url_for('database.add_entity') }}" class="btn btn-outline-light">
+                            <i class="fas fa-plus me-2"></i>Add Entity
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="text-white mb-0">
+                        <i class="fas fa-history me-2"></i>Recent Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_activity %}
+                    <div class="activity-list">
+                        {% for activity in recent_activity %}
+                        <div class="activity-item d-flex align-items-start py-2">
+                            <div class="activity-icon me-3">
+                                <i class="fas fa-{% if activity.action == 'login' %}sign-in-alt{% elif activity.action == 'logout' %}sign-out-alt{% elif 'report' in activity.action %}file-alt{% elif 'entity' in activity.action %}building{% else %}circle{% endif %} text-muted"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text text-white small">
+                                    {{ activity.action.replace('_', ' ').title() }}
+                                </div>
+                                <div class="activity-time text-muted small">
+                                    {{ activity.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-3">
+                        <i class="fas fa-history text-muted fa-2x mb-2"></i>
+                        <p class="text-muted small mb-0">No recent activity</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Add hover effects to stat cards
+document.addEventListener('DOMContentLoaded', function() {
+    const statCards = document.querySelectorAll('.stat-card');
+    
+    statCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-2px)';
+            this.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.3)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = 'none';
+        });
+    });
+});
+</script>
+{% endblock %}
