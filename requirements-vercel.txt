@@ -1,0 +1,28 @@
+# Ultra-lightweight requirements for Vercel deployment
+# Core Flask dependencies only
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
+Flask-Login==0.6.3
+Werkzeug==3.0.1
+WTForms==3.1.1
+SQLAlchemy==2.0.23
+
+# Essential minimal dependencies
+python-dotenv==1.0.0
+bcrypt==4.1.2
+pyotp==2.9.0
+cryptography==41.0.7
+bleach==6.1.0
+email-validator==2.1.0
+requests==2.31.0
+
+# Database
+psycopg2-binary==2.9.7
+
+# Removed heavy dependencies:
+# - qrcode (use external QR service)
+# - Pillow (use external image service)
+# - Flask-Mail (use external email service)
+# - Flask-Migrate (not needed for serverless)
+# - pandas, plotly, folium (too heavy)

@@ -19,7 +19,7 @@
   "env": {
     "FLASK_ENV": "production"
   },
-  "buildCommand": "echo 'Building Python Flask app' && pip install -r requirements.txt",
-  "installCommand": "pip install -r requirements.txt",
+  "buildCommand": "echo 'Building Python Flask app' && pip install -r requirements-vercel.txt",
+  "installCommand": "pip install -r requirements-vercel.txt",
   "framework": null
 }
