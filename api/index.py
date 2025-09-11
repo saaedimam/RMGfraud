@@ -12,7 +12,7 @@ sys.path.insert(0, str(root_dir))
 # Change working directory to root
 os.chdir(root_dir)
 
-from app import app
+from app_vercel import app
 
 def handler(request):
     """Vercel serverless function handler"""
