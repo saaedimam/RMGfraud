@@ -26,6 +26,7 @@ coverage.xml
 *.db
 *.sqlite
 *.sqlite3
+instance/
 
 # Environment files
 .env
@@ -48,8 +49,17 @@ Thumbs.db
 logs/
 *.log
 
-# Instance folder
-instance/
-
 # Migrations (will be handled by Vercel)
 migrations/
+
+# Test files
+test_*.py
+*_test.py
+tests/
+
+# Documentation
+*.md
+!README.md
+
+# Deployment scripts
+deploy-*.sh

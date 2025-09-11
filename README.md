@@ -234,7 +234,12 @@ vercel
 1. Go to [vercel.com](https://vercel.com)
 2. Click "New Project"
 3. Import your Git repository
-4. Vercel will auto-detect it's a Python project
+4. **Important**: If you get "No Next.js version detected" error:
+   - Go to Project Settings → General
+   - Set "Framework Preset" to "Other"
+   - Set "Root Directory" to "."
+   - Set "Build Command" to "pip install -r requirements.txt"
+   - Set "Output Directory" to "."
 
 #### Step 4: Configure Environment Variables
 In your Vercel project dashboard, go to Settings > Environment Variables and add:
@@ -378,10 +383,17 @@ CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
 ### Troubleshooting
 
 #### Common Issues
-1. **App won't start**: Check environment variables
-2. **Database connection fails**: Verify `DATABASE_URL` format
-3. **Static files not loading**: Ensure files are in `static/` directory
-4. **Email not working**: Check SMTP credentials
+1. **"No Next.js version detected" error**:
+   - Go to Vercel Project Settings → General
+   - Set "Framework Preset" to "Other"
+   - Set "Root Directory" to "."
+   - Set "Build Command" to "pip install -r requirements.txt"
+   - Set "Output Directory" to "."
+
+2. **App won't start**: Check environment variables
+3. **Database connection fails**: Verify `DATABASE_URL` format
+4. **Static files not loading**: Ensure files are in `static/` directory
+5. **Email not working**: Check SMTP credentials
 
 #### Debug Commands
 ```bash

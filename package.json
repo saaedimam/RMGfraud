@@ -1,0 +1,25 @@
+{
+  "name": "rmgfraud",
+  "version": "1.0.0",
+  "description": "RMGFraud - Fraud Detection Platform",
+  "main": "api/index.py",
+  "scripts": {
+    "build": "echo 'No build step required for Python Flask app'",
+    "start": "python api/index.py"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "flask",
+    "python",
+    "fraud-detection",
+    "rmg"
+  ],
+  "author": "RMGFraud Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/RMGfraud.git"
+  }
+}
