@@ -172,26 +172,172 @@ RMGfraud/
 
 ## 🚀 Deployment
 
-### Production Deployment
+### Quick Deploy to Vercel (Recommended)
 
-1. **Set up production environment**
-   ```bash
-   export FLASK_ENV=production
-   export DATABASE_URL=postgresql://user:pass@localhost/rmgfraud
-   ```
+Deploy your RMGFraud application to Vercel in minutes:
 
-2. **Install production dependencies**
-   ```bash
-   pip install gunicorn psycopg2-binary
-   ```
+#### Prerequisites
+- GitHub account
+- Vercel account (free at [vercel.com](https://vercel.com))
+- External PostgreSQL database (see database setup below)
 
-3. **Run with Gunicorn**
-   ```bash
-   gunicorn -w 4 -b 0.0.0.0:8000 app:app
-   ```
+#### Step 1: Prepare Your Repository
+```bash
+# Ensure all files are committed
+git add .
+git commit -m "Prepare for Vercel deployment"
+git push origin main
+```
 
-### Docker Deployment
+#### Step 2: Set Up External Database
+Since Vercel doesn't support persistent databases, you need an external PostgreSQL database:
 
+**Option A: Supabase (Free tier available)**
+1. Go to [supabase.com](https://supabase.com)
+2. Create a new project
+3. Get your database URL from Settings > Database
+4. Format: `postgresql://postgres:[password]@[host]:5432/postgres`
+
+**Option B: Railway PostgreSQL**
+1. Go to [railway.app](https://railway.app)
+2. Create new project > Database > PostgreSQL
+3. Get connection string from Variables tab
+
+**Option C: Neon (Free tier)**
+1. Go to [neon.tech](https://neon.tech)
+2. Create free account and database
+3. Get connection string
+
+#### Step 3: Deploy to Vercel
+
+**Method 1: Vercel CLI (Recommended)**
+```bash
+# Install Vercel CLI
+npm install -g vercel
+
+# Login to Vercel
+vercel login
+
+# Deploy from your project directory
+vercel
+
+# Follow the prompts:
+# - Set up and deploy? Y
+# - Which scope? (Choose your account)
+# - Link to existing project? N
+# - Project name: rmgfraud
+# - Directory: ./
+# - Override settings? N
+```
+
+**Method 2: Vercel Dashboard**
+1. Go to [vercel.com](https://vercel.com)
+2. Click "New Project"
+3. Import your Git repository
+4. Vercel will auto-detect it's a Python project
+
+#### Step 4: Configure Environment Variables
+In your Vercel project dashboard, go to Settings > Environment Variables and add:
+
+```env
+# Required
+SECRET_KEY=your-very-secure-secret-key-here
+DATABASE_URL=postgresql://username:password@host:port/database_name
+FLASK_ENV=production
+
+# Optional but recommended
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your-admin-password
+ENCRYPTION_KEY=your-32-character-encryption-key
+WTF_CSRF_ENABLED=true
+LOG_LEVEL=INFO
+```
+
+#### Step 5: Initialize Database
+After deployment, initialize your database:
+
+```bash
+# Set environment variables locally
+export DATABASE_URL=your_postgresql_url
+export SECRET_KEY=your_secret_key
+
+# Initialize database
+python -c "
+from app import app, db
+with app.app_context():
+    db.create_all()
+    print('Database initialized successfully!')
+"
+
+# Create admin user
+python create_admin.py
+```
+
+#### Step 6: Test Your Deployment
+1. Visit your Vercel URL (e.g., `https://rmgfraud.vercel.app`)
+2. Test the main functionality
+3. Verify database operations work
+4. Check authentication flow
+
+#### Quick Deploy Script
+```bash
+# Use the provided deployment script
+./deploy-vercel.sh
+
+# Or test configuration locally first
+python3 test-vercel.py
+```
+
+### Alternative Deployment Options
+
+#### Railway (Easiest for Flask apps)
+```bash
+# Use the provided deployment script
+./deploy-railway.sh
+
+# Or manually:
+# 1. Go to railway.app
+# 2. Connect GitHub repo
+# 3. Add PostgreSQL database
+# 4. Set environment variables
+# 5. Deploy!
+```
+
+#### Render (Free tier available)
+1. Connect GitHub repository
+2. Add PostgreSQL database
+3. Configure build command: `pip install -r requirements.txt`
+4. Start command: `gunicorn -w 4 -b 0.0.0.0:$PORT app:app`
+
+#### Traditional VPS Deployment
+```bash
+# On Ubuntu server
+sudo apt update
+sudo apt install python3-pip postgresql nginx
+
+# Install dependencies
+pip3 install -r requirements.txt
+pip3 install gunicorn psycopg2-binary
+
+# Set up PostgreSQL
+sudo -u postgres createdb rmgfraud
+sudo -u postgres createuser rmgfraud_user
+
+# Configure environment variables
+export FLASK_ENV=production
+export DATABASE_URL=postgresql://rmgfraud_user:password@localhost/rmgfraud
+export SECRET_KEY=your-secret-key
+
+# Run with Gunicorn
+gunicorn -w 4 -b 0.0.0.0:8000 app:app
+```
+
+#### Docker Deployment
 ```dockerfile
 FROM python:3.11-slim
 WORKDIR /app
@@ -200,6 +346,61 @@ RUN pip install -r requirements.txt
 COPY . .
 EXPOSE 8000
 CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "app:app"]
+```
+
+### Deployment Considerations
+
+#### Vercel Limitations
+- ⚠️ **Database Timeouts**: 10-second limit (hobby plan)
+- ⚠️ **No Persistent Storage**: SQLite won't work
+- ⚠️ **File Upload Limits**: 4.5MB max
+- ⚠️ **Cold Starts**: Functions may be slow on first request
+
+#### Recommended for Production
+- **Railway**: Best for Flask apps with databases
+- **Render**: Good free tier, better than Vercel for Flask
+- **Heroku**: Traditional, well-supported
+- **AWS/GCP/Azure**: Enterprise with auto-scaling
+
+### Environment Variables Reference
+
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `SECRET_KEY` | Flask secret key | Yes | `your-secret-key-here` |
+| `DATABASE_URL` | Database connection | Yes | `postgresql://user:pass@host/db` |
+| `FLASK_ENV` | Environment | Yes | `production` |
+| `MAIL_SERVER` | SMTP server | No | `smtp.gmail.com` |
+| `MAIL_USERNAME` | Email username | No | `your-email@gmail.com` |
+| `MAIL_PASSWORD` | Email password | No | `your-app-password` |
+| `ADMIN_EMAIL` | Admin email | No | `admin@yourdomain.com` |
+| `ADMIN_PASSWORD` | Admin password | No | `your-admin-password` |
+
+### Troubleshooting
+
+#### Common Issues
+1. **App won't start**: Check environment variables
+2. **Database connection fails**: Verify `DATABASE_URL` format
+3. **Static files not loading**: Ensure files are in `static/` directory
+4. **Email not working**: Check SMTP credentials
+
+#### Debug Commands
+```bash
+# Test locally
+python run.py
+
+# Check database connection
+python -c "
+from app import app, db
+with app.app_context():
+    print('Database connected:', db.engine.url)
+"
+
+# Verify environment variables
+python -c "
+import os
+print('SECRET_KEY:', bool(os.environ.get('SECRET_KEY')))
+print('DATABASE_URL:', bool(os.environ.get('DATABASE_URL')))
+"
 ```
 
 ## 🤝 Contributing
