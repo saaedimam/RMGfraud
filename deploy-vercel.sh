@@ -44,6 +44,15 @@ echo "✅ Vercel authentication ready"
 # Deploy to Vercel
 echo "🚀 Deploying to Vercel..."
 echo "This will deploy your Flask app as serverless functions."
+echo ""
+echo "⚠️  If you get a 'No Next.js version detected' error:"
+echo "   1. Go to your Vercel project settings"
+echo "   2. Go to 'General' tab"
+echo "   3. Set 'Framework Preset' to 'Other'"
+echo "   4. Set 'Root Directory' to '.'"
+echo "   5. Set 'Build Command' to 'pip install -r requirements.txt'"
+echo "   6. Set 'Output Directory' to '.'"
+echo ""
 
 vercel
 

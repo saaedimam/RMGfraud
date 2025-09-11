@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
@@ -20,7 +23,7 @@
       "maxDuration": 30
     }
   },
-  "buildCommand": "pip install -r requirements.txt",
-  "outputDirectory": ".",
-  "installCommand": "pip install -r requirements.txt"
+  "buildCommand": "echo 'Building Python Flask app' && pip install -r requirements.txt",
+  "installCommand": "pip install -r requirements.txt",
+  "framework": null
 }
