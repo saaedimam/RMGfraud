@@ -1,0 +1,23 @@
+# Vercel Environment Variables
+# Copy these to your Vercel project settings
+
+# Required
+SECRET_KEY=your-very-secure-secret-key-here
+DATABASE_URL=postgresql://username:password@host:port/database_name
+
+# Optional but recommended
+FLASK_ENV=production
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your-admin-password
+
+# Security
+ENCRYPTION_KEY=your-32-character-encryption-key
+WTF_CSRF_ENABLED=true
+
+# Logging
+LOG_LEVEL=INFO

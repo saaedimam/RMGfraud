@@ -1,0 +1,33 @@
+# Railway Environment Variables
+# Copy these to your Railway project settings
+
+# Required - Get from Railway PostgreSQL service
+DATABASE_URL=postgresql://postgres:password@host:port/railway
+
+# Required - Generate a secure secret key
+SECRET_KEY=your-very-secure-secret-key-here
+
+# Production settings
+FLASK_ENV=production
+WTF_CSRF_ENABLED=true
+
+# Email settings (optional but recommended)
+MAIL_SERVER=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USE_TLS=true
+MAIL_USERNAME=your-email@gmail.com
+MAIL_PASSWORD=your-app-password
+
+# Admin user settings
+ADMIN_EMAIL=admin@yourdomain.com
+ADMIN_PASSWORD=your-admin-password
+
+# Security
+ENCRYPTION_KEY=your-32-character-encryption-key
+
+# Logging
+LOG_LEVEL=INFO
+
+# Optional: Custom settings
+ADMIN_EMAIL=admin@rmgfraud.com
+ADMIN_PASSWORD=change-this-password

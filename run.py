@@ -6,12 +6,16 @@ Simple script to run the Flask application
 
 import os
 import sys
-from app import app
+from app import app, db
 
 if __name__ == '__main__':
     # Set environment variables
     os.environ.setdefault('FLASK_ENV', 'development')
     os.environ.setdefault('FLASK_DEBUG', '1')
+    
+    # Initialize database
+    with app.app_context():
+        db.create_all()
     
     # Run the application
     app.run(
