@@ -1,0 +1,60 @@
+name: Anti-Bloat Guardian
+on: 
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  size-guard:
+    runs-on: ubuntu-latest
+    name: Block Large Files & Forbidden Extensions
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Reject large/forbidden files
+        run: |
+          set -e
+          echo "🔍 Scanning for forbidden file types and oversized files..."
+          
+          # Define forbidden extensions
+          FORBIDDEN_EXT="ipynb|zip|tar|7z|rar|iso|mp4|mov|mkv|avi|psd|ai|tiff|pdf|csv|parquet|xlsx|sqlite|db"
+          
+          # Check for forbidden file types in the entire repo
+          echo "Checking for forbidden file extensions..."
+          BAD=$(find . -type f -name "*.git" -prune -o -type f | grep -E "\.(${FORBIDDEN_EXT})$" || true)
+          if [ -n "$BAD" ]; then
+            echo "❌ FORBIDDEN FILE TYPES DETECTED:"
+            echo "$BAD"
+            echo ""
+            echo "These file types are banned to prevent repository bloat."
+            echo "Remove these files and add them to .gitignore"
+            exit 1
+          fi
+          
+          # Check for files over 2MB
+          echo "Checking for oversized files (>2MB)..."
+          BIG=$(find . -type f -name ".git" -prune -o -type f -size +2M -print || true)
+          if [ -n "$BIG" ]; then
+            echo "❌ FILES OVER 2MB DETECTED:"
+            echo "$BIG"
+            echo ""
+            echo "Files over 2MB are not allowed to prevent serverless deployment issues."
+            echo "Consider using external storage or reducing file size."
+            exit 1
+          fi
+          
+          # Check for bloat directories
+          echo "Checking for bloat directories..."
+          BLOAT_DIRS="data datasets sample_data samples uploads media screenshots dumps exports backup recordings node_modules __pycache__ .pytest_cache .mypy_cache dist build notebooks"
+          for dir in $BLOAT_DIRS; do
+            if [ -d "$dir" ]; then
+              echo "❌ BLOAT DIRECTORY DETECTED: $dir"
+              echo "This directory type is banned. Add to .gitignore and remove from repository."
+              exit 1
+            fi
+          done
+          
+          echo "✅ Repository is clean - no bloat detected!"

@@ -1,1 +1,95 @@
-.vercel
+# Python
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.cache/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Environment files
+.env
+.env.*
+*.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Bloat patterns - NEVER COMMIT THESE
+notebooks/
+*.ipynb
+data/
+datasets/
+sample_data/
+samples/
+uploads/
+media/
+screenshots/
+dumps/
+exports/
+backup/
+recordings/
+dist/
+build/
+*.egg-info/
+node_modules/
+
+# Archives and binaries
+*.zip
+*.tar
+*.tar.*
+*.7z
+*.rar
+*.iso
+*.mp4
+*.mov
+*.mkv
+*.avi
+*.tiff
+*.psd
+*.ai
+*.pdf
+*.csv
+*.parquet
+*.xlsx
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+instance/
+
+# Logs
+logs/
+*.log
+
+# Migrations (handled by deployment)
+migrations/versions/
